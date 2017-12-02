@@ -6,10 +6,21 @@ public class BallController : MonoBehaviour {
 
 	// Movement Speed
 	public float speed;
+	//Pass in color list from variable set in level settings
+	public List<Color> colorList;
+
+	private SpriteRenderer ballSprite;
+	//private Color currentBallColor;
+
 
 	// Use this for initialization
 	void Start () {
-		GetComponent<Rigidbody2D>().velocity = Vector2.up * speed;
+		ballSprite = GetComponent<SpriteRenderer> ();
+
+		//remove code when list can be passed in
+		colorList.Add(Color.red);
+		colorList.Add(Color.green);
+		colorList.Add(Color.cyan);
 	}
 
 	float hitFactor(Vector2 ballPos, Vector2 racketPos,
@@ -24,17 +35,37 @@ public class BallController : MonoBehaviour {
 
 	void OnCollisionEnter2D(Collision2D col) {
 		// Hit the Racket?
-		if (col.gameObject.CompareTag("Player")) {
+		if (col.gameObject.CompareTag ("Player")) {
 			// Calculate hit Factor
-			float x=hitFactor(transform.position,
-				col.transform.position,
-				col.collider.bounds.size.x);
+			float x = hitFactor (transform.position,
+				         col.transform.position,
+				         col.collider.bounds.size.x);
 
 			// Calculate direction, set length to 1
-			Vector2 dir = new Vector2(x, 1).normalized;
+			Vector2 dir = new Vector2 (x, 1).normalized;
 
 			// Set Velocity with dir * speed
-			GetComponent<Rigidbody2D>().velocity = dir * speed;
+			GetComponent<Rigidbody2D> ().velocity = dir * speed;
+		} else if (!col.gameObject.CompareTag("Border")){
+			//ballSprite.color = new Color (Random.Range(0,255),Random.Range(0,255),Random.Range(0,255));
+			ChangeColor();
 		}
+	}
+
+	void ChangeColor () {
+		//Color oldBallColor;
+
+		//if (currentBallColor != Color.white) {
+		//	oldBallColor = currentBallColor;
+		//}
+
+		int randomIndex = Random.Range(0,colorList.Count);
+		ballSprite.color = colorList[randomIndex];
+
+		//Store the color so that it may be removed
+		//currentBallColor = colorList[randomIndex];
+		//colorList.RemoveAt[randomIndex];
+		//colorList.Add [oldBallColor];
+
 	}
 }
