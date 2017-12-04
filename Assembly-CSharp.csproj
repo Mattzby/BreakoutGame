@@ -52,10 +52,9 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Scripts\BallController.cs" />
-     <Compile Include="Assets\Scripts\DestroyOnCollision.cs" />
-     <Compile Include="Assets\Scripts\DestroysOtherOnCollision.cs" />
+     <Compile Include="Assets\Scripts\BallStopController.cs" />
+     <Compile Include="Assets\Scripts\BlockController.cs" />
      <Compile Include="Assets\Scripts\GameController.cs" />
-     <Compile Include="Assets\Scripts\Mover.cs" />
      <Compile Include="Assets\Scripts\PlayerController.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>D:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>

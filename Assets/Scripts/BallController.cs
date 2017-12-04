@@ -7,20 +7,26 @@ public class BallController : MonoBehaviour {
 	// Movement Speed
 	public float speed;
 	//Pass in color list from variable set in level settings
-	public List<Color> colorList;
+	public Color[] colors;
 
 	private SpriteRenderer ballSprite;
-	//private Color currentBallColor;
-
+	private int currentColorIndex;
+	private float bonusSpeedModifier;
+	//private Color currentColor;
 
 	// Use this for initialization
 	void Start () {
+		bonusSpeedModifier = 1;
 		ballSprite = GetComponent<SpriteRenderer> ();
+		currentColorIndex = 0;
 
 		//remove code when list can be passed in
-		colorList.Add(Color.red);
-		colorList.Add(Color.green);
-		colorList.Add(Color.cyan);
+		//colorList.Add(Color.red);
+		//colorList.Add(Color.green);
+		//colorList.Add(Color.cyan);
+
+		//set initial ball color
+		ballSprite.color = colors [currentColorIndex];
 	}
 
 	float hitFactor(Vector2 ballPos, Vector2 racketPos,
@@ -45,27 +51,34 @@ public class BallController : MonoBehaviour {
 			Vector2 dir = new Vector2 (x, 1).normalized;
 
 			// Set Velocity with dir * speed
-			GetComponent<Rigidbody2D> ().velocity = dir * speed;
+			GetComponent<Rigidbody2D> ().velocity = dir * speed * bonusSpeedModifier;
 		} else if (!col.gameObject.CompareTag("Border")){
 			//ballSprite.color = new Color (Random.Range(0,255),Random.Range(0,255),Random.Range(0,255));
-			ChangeColor();
+			//ChangeColor();
 		}
 	}
 
-	void ChangeColor () {
-		//Color oldBallColor;
+	public void ChangeColor () {
 
-		//if (currentBallColor != Color.white) {
-		//	oldBallColor = currentBallColor;
-		//}
+		//Random Color
+		//int randomIndex = Random.Range(0,colorList.Count);
+		//ballSprite.color = colorList[randomIndex];
 
-		int randomIndex = Random.Range(0,colorList.Count);
-		ballSprite.color = colorList[randomIndex];
-
-		//Store the color so that it may be removed
-		//currentBallColor = colorList[randomIndex];
-		//colorList.RemoveAt[randomIndex];
-		//colorList.Add [oldBallColor];
-
+		//Cycle Color
+		currentColorIndex = currentColorIndex + 1;
+		if (currentColorIndex == colors.Length) {
+			currentColorIndex = 0;
+		}
+		ballSprite.color = colors [currentColorIndex];
 	}
+
+	//TODO: Speed modifier needs to be added when ball hits block, not just when hitting player 
+	public void AdjustSpeedModifier (float modifyBy) {
+		bonusSpeedModifier = bonusSpeedModifier + modifyBy;
+	}
+
+	//public Color GetCurrentColor(){
+	//	return currentColor;
+	//}
+
 }
