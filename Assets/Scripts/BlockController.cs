@@ -20,10 +20,16 @@ public class BlockController : MonoBehaviour {
 			int oldScore = GameController.getInstance ().GetScore();
 			int newScore;
 
+			//Check if colors match, adjust score accordingly
 			if (ballColor.Equals(blockColor)) {
 				newScore = oldScore + 1000;
 				collisionInfo.gameObject.GetComponent<BallController> ().AdjustSpeedModifier (ballSpeedModifier);
 				Destroy(gameObject);
+			
+				//Check if all blocks destroyed, if so, move to next scene
+				if (AllBlocksDestroyed ()) {
+					GameController.getInstance ().NextScene();
+				}
 			} 
 			else {
 				newScore = oldScore - 100;
@@ -31,11 +37,20 @@ public class BlockController : MonoBehaviour {
 			}
 
 			GameController.getInstance ().SetScore (newScore);
-
 			//change ball's color
 			collisionInfo.gameObject.GetComponent<BallController>().ChangeColor();
 
 		}
 			
+	}
+
+	//Checks to see if all blocks are destroyed, returns true if all blocks destroyed
+	private bool AllBlocksDestroyed() {
+		GameObject[] blocks = GameObject.FindGameObjectsWithTag ("Block");
+		if (blocks.Length == 1) {
+			return true;
+		} else {
+			return false;
+		}		
 	}
 }
