@@ -13,12 +13,13 @@ public class BallStopController : MonoBehaviour {
 			int oldLives = GameController.getInstance().GetLives();
 			int newLives = oldLives - 1;
 			GameController.getInstance ().SetLives (newLives);
+			player.GetComponent<PlayerController> ().SpawnBall ();
 
 			//If player has lives, spawn a new ball
 			//TODO: Remove this logic when actual gameover logic is created.
-			if (newLives >= 0) {
+			/*if (newLives >= 0) {
 				player.GetComponent<PlayerController> ().SpawnBall ();
-			}
+			}*/
 
 			Destroy(collisionInfo.gameObject);
 		}

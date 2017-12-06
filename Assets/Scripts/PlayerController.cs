@@ -55,7 +55,7 @@ public class PlayerController : MonoBehaviour {
 	void ShootBall() {
 		//destroy spawned ball, instantiate new ball gameobject - 
 		//resets any scale issues encountered by parent and reverts body type change
-		if (ballAttached && Input.GetButton ("Fire1")) {
+		if (ballAttached && Input.GetButton ("Jump")) {
 			ballAttached = false;
 			GameObject ball;
 			ball = Instantiate (ballPrefab, ballSpawn.transform.position, ballSpawn.transform.rotation);

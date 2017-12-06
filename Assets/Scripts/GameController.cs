@@ -14,45 +14,37 @@ public class GameController : MonoBehaviour {
 
 	void Awake ()
 	{
-		instance = this;
-
-		//TODO: Is this needed only for dev? Or should each scene have a gameController
-		//look to see if a GameController already exists - if so, destroy this one
-		GameObject[] otherGameController = GameObject.FindGameObjectsWithTag("GameController");
-		if (otherGameController.Length == 1){
-			DontDestroyOnLoad (transform.gameObject);
-			//DontDestroyOnLoad (scoreText.transform.gameObject);
-			//DontDestroyOnLoad (livesText.transform.gameObject);
-		} else {
+		if (instance == null){
+			instance = this;
+			DontDestroyOnLoad(gameObject);
+			SceneManager.sceneLoaded += OnSceneLoaded;
+		}
+		else if (instance != this){
 			Destroy (gameObject);
-			//Destroy (scoreText.transform.gameObject);
-			//Destroy (livesText.transform.gameObject);
 		}
 	}
 
-	void OnEnable() 
+	/*void OnEnable() 
 	{
 		SceneManager.sceneLoaded += OnSceneLoaded;
-	}
-
-
+	}*/
+		
 	void Start () 
 	{
 		score = 0;
-		lives = 3;
-
+		lives = 3;		
 		UpdateScore ();
 		UpdateLives ();
 	}
 
 	void UpdateScore()
 	{
-		scoreText.text = "Score: " + GameController.getInstance().GetScore();
+		scoreText.text = "Score: " + score;
 	}
 
 	void UpdateLives()
 	{
-		livesText.text = "Lives: " +  GameController.getInstance().GetLives();
+		livesText.text = "Lives: " + lives;
 	}
 
 	public void SetScore (int newScoreValue)
@@ -70,11 +62,11 @@ public class GameController : MonoBehaviour {
 	{
 		lives = newLivesValue;
 
-		//TODO: Add gameover screen with restart game functionality
-		if (lives < 0) {
+		if (lives < 1) {
 			SceneManager.LoadScene ("Game Over", LoadSceneMode.Single);
+		} else {
+			UpdateLives ();
 		}
-		UpdateLives ();
 	}
 
 	public int GetLives ()
@@ -88,44 +80,22 @@ public class GameController : MonoBehaviour {
 	}
 
 	public void NextScene() {
-		//TODO: Why the fuck can't unity load a scene by index properly?
-		Debug.Log ("MOVING TO NEXT SCENE!");
-		//Debug.Log ("SCENE INDEX = " + nextSceneIndex);
-
-		/*if (SceneManager.GetSceneByName ("Level " + levelNumber).Equals(null)) {
-			SceneManager.LoadScene ("Game Over", LoadSceneMode.Single);
-		} 
-		else {
-			SceneManager.LoadScene("Level " + GameController.getInstance().levelNumber, LoadSceneMode.Single);
-			GameController.getInstance().levelNumber = GameController.getInstance().levelNumber + 1;
-		}*/
 		int nextSceneIndex = SceneManager.GetActiveScene ().buildIndex + 1;
 		if (SceneManager.sceneCountInBuildSettings > nextSceneIndex) {
 			SceneManager.LoadScene (nextSceneIndex);
-		}		
+		}
 	}
 
-	//TODO: Is updating the reference to the new UI text the best way? Create static UI GameObjects/Scripts?
-	//Reattach score/life text references after new scene loads
 	void OnSceneLoaded(Scene scene, LoadSceneMode mode){
 
 		//if not the title screen or game over screen
 		if (!scene.name.Equals ("Title") && !scene.name.Equals ("Game Over")) {
-			//wtf is going on here?
-			GameController.getInstance ().SetScore (score);
-			GameController.getInstance ().SetLives (lives);
-
+			
 			scoreText = GameObject.Find ("ScoreText").GetComponent<Text> ();
 			livesText = GameObject.Find ("LivesText").GetComponent<Text> ();
 
 			UpdateScore ();
 			UpdateLives ();
 		}
-	}
-
-	void resetStats(){
-		
-	}
-
-		
+	}		
 }

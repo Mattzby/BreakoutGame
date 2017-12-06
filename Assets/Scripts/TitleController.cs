@@ -14,13 +14,14 @@ public class TitleController : MonoBehaviour {
 	void Update () {
 
 		if (Input.GetButton ("Fire1")) {
-
 			//load into test level
+			//Debug.Log ("LAUNCHING TEST LEVEL!");
 			//SceneManager.LoadScene ("Level Test", LoadSceneMode.Single);
 
+			//Debug.Log ("LAUNCHING LEVEL 1!");
 			//load into level 1
 			SceneManager.LoadScene ("Level 1", LoadSceneMode.Single);			
 		}
-		
+
 	}
 }
