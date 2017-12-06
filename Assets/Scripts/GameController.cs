@@ -7,6 +7,7 @@ using UnityEngine.SceneManagement;
 public class GameController : MonoBehaviour {
 	public Text scoreText;
 	public Text livesText;
+	public Text levelNameText;
 
 	private static GameController instance;
 	private int score;
@@ -35,6 +36,7 @@ public class GameController : MonoBehaviour {
 		lives = 3;		
 		UpdateScore ();
 		UpdateLives ();
+		UpdateLevelName();
 	}
 
 	void UpdateScore()
@@ -45,6 +47,11 @@ public class GameController : MonoBehaviour {
 	void UpdateLives()
 	{
 		livesText.text = "Lives: " + lives;
+	}
+
+	void UpdateLevelName()
+	{
+		levelNameText.text = SceneManager.GetActiveScene().name;
 	}
 
 	public void SetScore (int newScoreValue)
@@ -93,9 +100,11 @@ public class GameController : MonoBehaviour {
 			
 			scoreText = GameObject.Find ("ScoreText").GetComponent<Text> ();
 			livesText = GameObject.Find ("LivesText").GetComponent<Text> ();
+			levelNameText = GameObject.Find ("LevelNameText").GetComponent<Text> ();
 
 			UpdateScore ();
 			UpdateLives ();
+			UpdateLevelName();
 		}
 	}		
 }
