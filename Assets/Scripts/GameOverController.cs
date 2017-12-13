@@ -25,10 +25,10 @@ public class GameOverController : MonoBehaviour {
 		//Cleanup GameController to reset score/lives for next playthrough
 		//Destroy (GameObject.FindGameObjectWithTag("GameController"));
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
-		bool highScoreInputActivated = true;
+		bool highScoreInputActivated = false;
 		//bool highScoreInputActivated = GameObject.Find("HighScoreTable").GetComponent<HighScoreController>().PlayerIsTyping();
 
 		if (Input.GetButton ("Fire1") && !highScoreInputActivated) {

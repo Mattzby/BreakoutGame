@@ -8,10 +8,12 @@ public class GameController : MonoBehaviour {
 	public Text scoreText;
 	public Text livesText;
 	public Text levelNameText;
+	public Text speedText;
 
 	private static GameController instance;
 	private int score;
 	private int lives;
+	private float ballSpeedPercentage;
 
 	void Awake ()
 	{
@@ -32,11 +34,13 @@ public class GameController : MonoBehaviour {
 		
 	void Start () 
 	{
+		ballSpeedPercentage = 0;
 		score = 0;
-		lives = 3;		
+		lives = 3;	
 		UpdateScore ();
 		UpdateLives ();
 		UpdateLevelName();
+		UpdateBallSpeedText();
 	}
 
 	void UpdateScore()
@@ -52,6 +56,16 @@ public class GameController : MonoBehaviour {
 	void UpdateLevelName()
 	{
 		levelNameText.text = SceneManager.GetActiveScene().name;
+	}
+
+	public void SetBallSpeedText(float ballSpeed) {
+		ballSpeedPercentage = 100 * ballSpeed;
+		UpdateBallSpeedText ();
+	}
+
+	void UpdateBallSpeedText()
+	{
+		speedText.text = "Speed: " + ballSpeedPercentage + "%";	
 	}
 
 	public void SetScore (int newScoreValue)
@@ -101,10 +115,12 @@ public class GameController : MonoBehaviour {
 			scoreText = GameObject.Find ("ScoreText").GetComponent<Text> ();
 			livesText = GameObject.Find ("LivesText").GetComponent<Text> ();
 			levelNameText = GameObject.Find ("LevelNameText").GetComponent<Text> ();
+			speedText = GameObject.Find ("SpeedText").GetComponent<Text> ();
 
 			UpdateScore ();
 			UpdateLives ();
 			UpdateLevelName();
+			UpdateBallSpeedText();
 		}
 	}		
 }

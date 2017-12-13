@@ -5,6 +5,8 @@ using UnityEngine;
 public class BlockController : MonoBehaviour {
 	public Color blockColor;
 	public float ballSpeedModifier;
+	public int successScore;
+	public int failScore;
 
 	private SpriteRenderer spriteRender;
 
@@ -14,32 +16,51 @@ public class BlockController : MonoBehaviour {
 	}
 
 	void OnCollisionEnter2D(Collision2D collisionInfo) {
-
 		if (collisionInfo.gameObject.CompareTag("Ball")) {
+			BallController ballController = collisionInfo.gameObject.GetComponent<BallController>();
+			Rigidbody2D ballBody = collisionInfo.gameObject.GetComponent<Rigidbody2D> ();
 			Color ballColor = collisionInfo.gameObject.GetComponent<SpriteRenderer> ().color;
-			int oldScore = GameController.getInstance ().GetScore();
-			int newScore;
+
+			int score = GameController.getInstance ().GetScore();
+			//int newScore;
 
 			//Check if colors match, adjust score accordingly
 			if (ballColor.Equals(blockColor)) {
-				newScore = oldScore + 1000;
-				collisionInfo.gameObject.GetComponent<BallController> ().AdjustSpeedModifier (ballSpeedModifier);
+				score = score + successScore;
+
+				//if the player aimed the ball, adjust the speed
+				if (ballController.GetPlayerHitBall() == true) {
+					ballController.AdjustBallSpeedModifier (-ballSpeedModifier);
+					ballBody.velocity = ballBody.velocity * ballController.GetBallSpeedModifier ();
+					//Debug.Log ("BALL SPEED MODIFIER DECREASED TO " + ballController.GetBallSpeedModifier());
+				}
+
+				//destroy block
 				Destroy(gameObject);
-			
+
 				//Check if all blocks destroyed, if so, move to next scene
 				if (AllBlocksDestroyed ()) {
 					GameController.getInstance ().NextScene();
 				}
 			} 
 			else {
-				newScore = oldScore - 100;
-				collisionInfo.gameObject.GetComponent<BallController> ().AdjustSpeedModifier (-ballSpeedModifier);
+				//if the player aimed the ball, subtract score, adjust the speed
+				if (ballController.GetPlayerHitBall() == true) {
+					score = score + failScore;
+					ballController.AdjustBallSpeedModifier (ballSpeedModifier);
+					ballBody.velocity = ballBody.velocity * ballController.GetBallSpeedModifier ();
+					//Debug.Log ("BALL SPEED MODIFIER INCREASED TO " + ballController.GetBallSpeedModifier());
+				}
 			}
 
-			GameController.getInstance ().SetScore (newScore);
-			//change ball's color
-			collisionInfo.gameObject.GetComponent<BallController>().ChangeColor();
+			//update score
+			GameController.getInstance ().SetScore (score);
 
+			//change ball's color
+			ballController.ChangeColor();
+
+			//update ball hit by player flag - since ball hit block
+			ballController.SetPlayerHitBall (false);
 		}
 			
 	}

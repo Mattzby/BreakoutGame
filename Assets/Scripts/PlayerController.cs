@@ -37,7 +37,6 @@ public class PlayerController : MonoBehaviour {
 	//Spawns ball above player paddle
 	public void SpawnBall() {
 		//Instantiate ball at position just above player paddle - increased y value
-		//Vector3 ballSpawn = new Vector3 (transform.position.x, transform.position.y + 1, transform.position.z);
 		GameObject ball;
 		ball = Instantiate (ballPrefab, ballSpawn.position, transform.rotation);
 
@@ -67,7 +66,6 @@ public class PlayerController : MonoBehaviour {
 						Destroy(child.gameObject);
 					}				
 			}
-
 			ball.GetComponent<Rigidbody2D>().velocity = Vector2.up * ball.GetComponent<BallController>().speed;
 		}
 	}

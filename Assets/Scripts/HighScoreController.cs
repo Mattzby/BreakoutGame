@@ -11,7 +11,7 @@ public class HighScoreController : MonoBehaviour {
 	private List<HighScore> highScores;
 	private int playerScore;
 	private bool nameEntryActivated;
-	private bool highScoreAchieved;
+	//private bool highScoreAchieved;
 
 	void Start () {
 		nameEntryActivated = false;
@@ -31,7 +31,7 @@ public class HighScoreController : MonoBehaviour {
 			playerScore = 0;
 		}
 
-		highScoreAchieved = EvaluatePlayerScore(playerScore);
+		EvaluatePlayerScore(playerScore);
 		GenerateHighScoreRows();
 
 		//Cleanup GameController to reset score/lives for next playthrough

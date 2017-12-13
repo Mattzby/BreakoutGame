@@ -6,28 +6,38 @@ public class BallController : MonoBehaviour {
 
 	// Movement Speed
 	public float speed;
+	public float maxSpeedModifier;
+	public float minSpeedModifier;
+
 	//Pass in color list from variable set in level settings
 	public Color[] colors;
 
+	private Rigidbody2D ballRigidBody;
 	private SpriteRenderer ballSprite;
 	private int currentColorIndex;
-	private float bonusSpeedModifier;
+	private float speedModifier;
+	private bool playerHitBall;
 	//private Color currentColor;
 
 	// Use this for initialization
 	void Start () {
-		bonusSpeedModifier = 1;
 		ballSprite = GetComponent<SpriteRenderer> ();
-		currentColorIndex = 0;
+		ballRigidBody = GetComponent<Rigidbody2D> ();
 
-		//remove code when list can be passed in
-		//colorList.Add(Color.red);
-		//colorList.Add(Color.green);
-		//colorList.Add(Color.cyan);
+		speedModifier = 1;
+		currentColorIndex = 0;
+		playerHitBall = true;
 
 		//set initial ball color
 		ballSprite.color = colors [currentColorIndex];
+
+		GameController.getInstance ().SetBallSpeedText (speedModifier);
 	}
+
+	//TODO: put velocity changes here... doesn't make sense, i dont want the speed increasing every frame...
+	/*void FixedUpdate(){
+		ballRigidBody.velocity = ballRigidBody.velocity * speed * speedModifier;
+	}*/
 
 	float hitFactor(Vector2 ballPos, Vector2 racketPos,
 		float racketWidth) {
@@ -42,6 +52,8 @@ public class BallController : MonoBehaviour {
 	void OnCollisionEnter2D(Collision2D col) {
 		// Hit the Racket?
 		if (col.gameObject.CompareTag ("Player")) {
+			//Debug.Log ("BALL HIT THE PLAYER!");
+			playerHitBall = true;			
 			// Calculate hit Factor
 			float x = hitFactor (transform.position,
 				         col.transform.position,
@@ -49,12 +61,20 @@ public class BallController : MonoBehaviour {
 
 			// Calculate direction, set length to 1
 			Vector2 dir = new Vector2 (x, 1).normalized;
+			ballRigidBody.velocity = dir * speed * speedModifier;
 
 			// Set Velocity with dir * speed
-			GetComponent<Rigidbody2D> ().velocity = dir * speed * bonusSpeedModifier;
-		} else if (!col.gameObject.CompareTag("Border")){
-			//ballSprite.color = new Color (Random.Range(0,255),Random.Range(0,255),Random.Range(0,255));
-			//ChangeColor();
+			/*
+			if (currentSpeed == startingSpeed) {
+				ballRigidBody.velocity = dir * startingSpeed;
+			} else {
+				ballRigidBody.velocity = dir * currentSpeed;
+			}
+			*/
+							
+		} else if (col.gameObject.CompareTag("Border")) {
+			//Debug.Log ("BALL HIT THE BORDER!");
+			//playerHitBall = false;			
 		}
 	}
 
@@ -72,13 +92,53 @@ public class BallController : MonoBehaviour {
 		ballSprite.color = colors [currentColorIndex];
 	}
 
-	//TODO: Speed modifier needs to be added when ball hits block, not just when hitting player 
-	public void AdjustSpeedModifier (float modifyBy) {
-		bonusSpeedModifier = bonusSpeedModifier + modifyBy;
+	public void AdjustBallSpeedModifier (float ballSpeedAdjustment) {
+
+		//Debug.Log ("OLD BALL SPEED MODIFIER = " + speedModifier);
+
+		float newBallSpeedModifier = speedModifier + ballSpeedAdjustment;
+
+		if (newBallSpeedModifier > maxSpeedModifier) {
+			speedModifier = maxSpeedModifier;
+		} else if (newBallSpeedModifier < minSpeedModifier) {
+			speedModifier = minSpeedModifier;
+		} else {
+			speedModifier = newBallSpeedModifier;
+		}
+
+		GameController.getInstance ().SetBallSpeedText (speedModifier);
+		//Debug.Log ("NEW BALL SPEED MODIFIER = " + speedModifier);
 	}
 
-	//public Color GetCurrentColor(){
-	//	return currentColor;
-	//}
+	public float GetBallSpeedModifier() {
+		return speedModifier;		
+	}
+
+	/*
+	public void SetBallSpeed (float newBallSpeed) {
+
+		Debug.Log ("OLD BALL SPEED = " + currentSpeed);
+
+		if (newBallSpeed > maxSpeed) {
+			currentSpeed = maxSpeed;
+		} else if (newBallSpeed < minSpeed) {
+			currentSpeed = minSpeed;
+		} else {
+			currentSpeed = newBallSpeed;
+		}
+
+		Debug.Log ("NEW BALL SPEED = " + currentSpeed);
+	}
+	*/
+
+
+	public void SetPlayerHitBall (bool ballHitByPlayer){
+		playerHitBall = ballHitByPlayer;		
+	}
+
+	public bool GetPlayerHitBall(){
+		return playerHitBall;
+	}
+
 
 }
