@@ -23,14 +23,39 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	void FixedUpdate() {
-		float moveHorizontal = Input.GetAxis("Horizontal");
-		Vector2 movement = new Vector3 (moveHorizontal, 0.0f);
+		Vector2 movement = new Vector2 ();
+
+		//TODO: Add device detection to support both mobile and web/standalone
+		//Touch Controls
+		if (Input.touchCount > 0) {
+			Vector2 touchPixelPosition = Input.GetTouch (0).position;
+			Vector2 touchWorldPosition = Camera.main.ScreenToWorldPoint (touchPixelPosition);
+
+			Debug.Log("TOUCH PIXEL POSITION X = " + touchPixelPosition);
+			Debug.Log ("TOUCH WORLD POSITION X = " + touchWorldPosition);
+			Debug.Log ("PLAYER OBJECT POSITION X = " + rb.position.x);
+
+			if (touchWorldPosition.x > rb.position.x) {
+				Debug.Log ("MOVE PLAYER RIGHT");
+				movement = new Vector2 (1f, 0.0f); 
+			} else if (touchWorldPosition.x < rb.position.x) {
+				Debug.Log ("MOVE PLAYER LEFT");
+				movement = new Vector2 (-1f, 0.0f); 
+			}
+		}
+			
+		//Keyboard Controls
+		//float moveHorizontal = Input.GetAxis("Horizontal");
+		//movement = new Vector2 (moveHorizontal, 0.0f);
 
 		rb.velocity = movement * movementSpeed;
 
 		//TODO: Add boundary positions to restrict player movement
 		float xPosition = Mathf.Clamp (rb.position.x, -7.5f, 7.5f);
 		rb.position = new Vector2 (xPosition,0.0f);
+
+
+
 
 	}
 
@@ -54,7 +79,9 @@ public class PlayerController : MonoBehaviour {
 	void ShootBall() {
 		//destroy spawned ball, instantiate new ball gameobject - 
 		//resets any scale issues encountered by parent and reverts body type change
-		if (ballAttached && Input.GetButton ("Jump")) {
+
+
+		if (ballAttached && Input.GetButton ("Jump") || ballAttached && Input.touchCount > 1) {
 			ballAttached = false;
 			GameObject ball;
 			ball = Instantiate (ballPrefab, ballSpawn.transform.position, ballSpawn.transform.rotation);
